@@ -1,0 +1,23 @@
+{
+    "name": "liasica/amap",
+    "description": "高德开发sdk",
+    "type": "library",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/liasica/amap/issues",
+        "wiki": "https://github.com/liasica/amap/wiki",
+        "source": "https://github.com/liasica/amap"
+    },
+    "authors": [
+        {
+            "name": "liasica",
+            "email": "magicrolan@qq.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "liasica\\amap\\": ""
+        }
+    }
+}
