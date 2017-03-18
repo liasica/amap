@@ -1,0 +1,91 @@
+<?php
+/**
+ * Author: liasica
+ * Email: magicrolan@qq.com
+ * CreateTime: 2017/3/18 下午3:10
+ */
+
+namespace liasica\amap\base;
+
+abstract class BaseAmap
+{
+    const AMAP_API_HOST = 'https://restapi.amap.com/v3/';
+    public $key;
+
+    public function __construct($key)
+    {
+        $this->key = $key;
+    }
+
+    /**
+     * GET请求数据
+     * @param       $api
+     * @param array $params
+     * @return array|bool
+     */
+    public function httpGet($api, array $params = [])
+    {
+        return $this->request($this->getUrl($api, $params));
+    }
+
+    /**
+     * 请求
+     * @param       $url
+     * @param array $options
+     * @return bool|array
+     */
+    protected function request($url, $options = [])
+    {
+        $options = [
+                       CURLOPT_URL            => $url,
+                       CURLOPT_TIMEOUT        => 30,
+                       CURLOPT_CONNECTTIMEOUT => 30,
+                       CURLOPT_RETURNTRANSFER => true,
+                   ] + (stripos($url, 'https://') !== false ? [
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_SSLVERSION     => CURL_SSLVERSION_TLSv1,
+            ] : []) + $options;
+        $curl    = curl_init();
+        curl_setopt_array($curl, $options);
+        $content = curl_exec($curl);
+        $status  = curl_getinfo($curl);
+        curl_close($curl);
+        if (isset($status['http_code']) && $status['http_code'] == 200) {
+            // 只返回json字符串
+            return json_decode($content, true) ?: false;
+        }
+        Yii::error([
+            'result' => $content,
+            'status' => $status,
+        ], __METHOD__);
+        return false;
+    }
+
+    /**
+     * 拼接请求URL
+     * @param $api
+     * @param $params
+     * @return string
+     */
+    public function getUrl($api, $params)
+    {
+        $url = self::AMAP_API_HOST . $api . '?key=' . $this->key;
+        return $url . '&' . http_build_query($params);
+    }
+
+    /**
+     * POST请求数据
+     * @param       $api
+     * @param array $params
+     * @param array $data
+     * @return array|bool
+     */
+    public function httpPost($api, array $params = [], array $data = [])
+    {
+        return $this->request($this->getUrl($api, $params), [
+            CURLOPT_POST       => true,
+            CURLOPT_POSTFIELDS => $data,
+        ]);
+    }
+}
