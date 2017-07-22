@@ -37,7 +37,9 @@ abstract class BaseAmap
      */
     public function getUrl($api, $params)
     {
-        $url = self::AMAP_API_HOST . $api . '?key=' . $this->key;
+        $url = strpos($api, 'https://') === false && strpos($api, 'http://') === false ?
+            self::AMAP_API_HOST . $api . '?key=' . $this->key :
+            $api . '?key=' . $this->key;
         return $url . '&' . http_build_query($params);
     }
 

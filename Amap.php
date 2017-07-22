@@ -11,8 +11,9 @@ use liasica\amap\base\BaseAmap;
 
 class Amap extends BaseAmap
 {
-    const API_PLACE_TEXT = 'place/text';
-    const GEOCODE_REGEO  = 'geocode/regeo';
+    const API_PLACE_TEXT  = 'place/text';
+    const GEOCODE_REGEO   = 'geocode/regeo';
+    const GEOFENCE_STATUS = 'https://restapi.amap.com/v4/geofence/status';
 
     /**
      * 关键字搜索
@@ -49,6 +50,24 @@ class Amap extends BaseAmap
             return false;
         }
         return $ret;
+    }
+
+    /**
+     * @param      $diu       用户设备唯一标识符，Android为imei，iOS为idfv
+     * @param      $locations 设备位置坐标组,包含坐标数据和坐标产生的时间戳数据。 判定依据：最新的点 作为当前，然后从距离当前点10s～一小时 范围内选出最早点
+     *                        格式: x1,y1,unix_ts;x2,y2,unix_ts
+     * @param null $uid
+     */
+    public function geofenceStatus($diu, $locations, $uid = null)
+    {
+        $ret = $this->httpGet(self::GEOFENCE_STATUS, [
+            'diu'       => $diu,
+            'locations' => $locations,
+            'uid'       => $uid,
+            'imei'      => $diu,
+        ]);
+        var_dump($ret);
+        exit();
     }
 
 }
