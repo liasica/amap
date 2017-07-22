@@ -25,7 +25,20 @@ abstract class BaseAmap
      */
     public function httpGet($api, array $params = [])
     {
-        return $this->request($this->getUrl($api, $params));
+        $url = $this->getUrl($api, $params);
+        return $this->request($url);
+    }
+
+    /**
+     * 拼接请求URL
+     * @param $api
+     * @param $params
+     * @return string
+     */
+    public function getUrl($api, $params)
+    {
+        $url = self::AMAP_API_HOST . $api . '?key=' . $this->key;
+        return $url . '&' . http_build_query($params);
     }
 
     /**
@@ -60,18 +73,6 @@ abstract class BaseAmap
             'status' => $status,
         ], __METHOD__);
         return false;
-    }
-
-    /**
-     * 拼接请求URL
-     * @param $api
-     * @param $params
-     * @return string
-     */
-    public function getUrl($api, $params)
-    {
-        $url = self::AMAP_API_HOST . $api . '?key=' . $this->key;
-        return $url . '&' . http_build_query($params);
     }
 
     /**

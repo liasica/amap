@@ -12,6 +12,7 @@ use liasica\amap\base\BaseAmap;
 class Amap extends BaseAmap
 {
     const API_PLACE_TEXT = 'place/text';
+    const GEOCODE_REGEO  = 'geocode/regeo';
 
     /**
      * 关键字搜索
@@ -23,11 +24,31 @@ class Amap extends BaseAmap
      */
     public function placeText($keywords, $types, array $params = [])
     {
-        return $this->httpGet(self::API_PLACE_TEXT, array_merge([
+        $ret = $this->httpGet(self::API_PLACE_TEXT, array_merge([
             'keyword' => $keywords,
             'types'   => $types,
         ], $params));
+        if ($ret['status'] != 1) {
+            return false;
+        }
+        return $ret['pois'];
     }
 
+    /**
+     * 逆地理编码
+     * @param       $location
+     * @param array $params
+     * @return array|bool
+     */
+    public function geocodeRegeo($location, array $params = [])
+    {
+        $ret = $this->httpGet(self::GEOCODE_REGEO, array_merge([
+            'location' => $location,
+        ], $params));
+        if ($ret['status'] != 1 || !isset($ret['regeocode']['addressComponent']['businessAreas'])) {
+            return false;
+        }
+        return $ret;
+    }
 
 }
