@@ -7,14 +7,21 @@
 
 namespace liasica\amap\base;
 
-abstract class BaseAmap
+use yii\base\Component;
+use yii\base\InvalidConfigException;
+
+abstract class BaseAmap extends Component
 {
     const AMAP_API_HOST = 'https://restapi.amap.com/v3/';
     public $key;
 
-    public function __construct($key)
+    public function init()
     {
-        $this->key = $key;
+        parent::init();
+
+        if ($this->key == null) {
+            throw new InvalidConfigException('amap must need key!');
+        }
     }
 
     /**
